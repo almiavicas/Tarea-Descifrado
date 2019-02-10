@@ -55,7 +55,7 @@ static void * get(struct ordered_set *set, int key) {
 		else break;
 	}
 	if (mid == NULL || mid->key != key) {
-		fprintf(stderr, "%s\n", err_knf);
+		fprintf(stderr, "%s: %d\n", err_knf, key);
 		return NULL;
 	}
 	return mid->value;
