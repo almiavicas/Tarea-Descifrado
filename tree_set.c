@@ -2,14 +2,16 @@
 #include <stdlib.h> // Included to use malloc
 #include "tree_set.h"
 
+typedef struct tree_set set_t;
+
 char err_mem[] = "not enought memory";
 char err_emp[] = "set is empty";
 char err_knf[] = "key not found";
 char err_ful[] = "set is full";
 char err_rep[] = "element key is repeated";
 
-struct tree_set * new_tree_set() {
-	struct tree_set *set = malloc(sizeof(struct tree_set));
+set_t * new_tree_set() {
+	set_t *set = malloc(sizeof(set_t));
 	if (set == NULL) {
 		fprintf(stderr, "%s\n", err_mem);
 		perror("Error: ");

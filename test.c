@@ -11,7 +11,7 @@ void person_info(struct person * p) {
 	printf("\tperson pointer: %p\n\tperson age: %d\n\tperson name: %s\n", p, p->age, p->name);
 }
 
-struct tree_set * c;
+set_t * c;
 struct person *person1;
 struct person *person2;
 struct person *person3;
