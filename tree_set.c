@@ -32,19 +32,30 @@ set_t * new_tree_set() {
 	// node_info(set->null);
 	set->root = set->null;
 	set->size = 0;
-	set->is_empty = &is_empty;
-	set->get = &get;
-	set->insert = &insert;
-	set->remove = &rb_remove;
-
 	return set;
 }
 
-static int is_empty(struct tree_set *set) {
+static int is_empty(set_t *set) {
 	return set->size == 0;
 }
 
-static void * get(struct tree_set *set, int key) {
+static int is_key(set_t *set, int key) {
+	struct key_value * x = set->root;
+	while (x != set->null) {
+		if (x->key == key) {
+			return 1;
+		}
+		else if (x->key < key) {
+			x = x->right;
+		}
+		else {
+			x = x->left;
+		}
+	}
+	return 0;
+}
+
+static void * get(set_t *set, int key) {
 	if (is_empty(set)) {
 		fprintf(stderr, "%s\n", err_emp);
 		return NULL;
@@ -53,7 +64,6 @@ static void * get(struct tree_set *set, int key) {
 	while (x != set->null) {
 		// node_info(x);
 		if (x->key == key) {
-			
 			return x->value;
 		}
 		else if (x->key < key) {
@@ -67,7 +77,7 @@ static void * get(struct tree_set *set, int key) {
 	return NULL;
 }
 
-static int insert(struct tree_set * set, int key, void * value) {
+static int insert(set_t * set, int key, void * value) {
 	struct key_value * node = malloc(sizeof(struct key_value));
 	if (node == NULL) {
 		fprintf(stderr, "%s\n", err_mem);
@@ -105,7 +115,7 @@ static int insert(struct tree_set * set, int key, void * value) {
 	return 1;
 }
 
-static void insert_fixup(struct tree_set *set, struct key_value * node) {
+static void insert_fixup(set_t *set, struct key_value * node) {
 	struct key_value * y;
 	while (node->parent->color == RED) {
 		if (node->parent == node->parent->parent->left) {
@@ -148,7 +158,7 @@ static void insert_fixup(struct tree_set *set, struct key_value * node) {
 	set->root->color = BLACK;
 }
 
-static int rb_remove(struct tree_set * set, int key) {
+static int rb_remove(set_t * set, int key) {
 	if (is_empty(set)) {
 		fprintf(stderr, "%s\n", err_emp);
 		return 0;
@@ -199,7 +209,7 @@ static int rb_remove(struct tree_set * set, int key) {
 	}
 }
 
-static void rb_remove_fixup(struct tree_set * set, struct key_value * x) {
+static void rb_remove_fixup(set_t * set, struct key_value * x) {
 	while (x != set->root && x->color == BLACK) {
 		if (x == x->parent->left) {
 			struct key_value * w = x->right;
@@ -259,7 +269,7 @@ static void rb_remove_fixup(struct tree_set * set, struct key_value * x) {
 	x->color = BLACK;
 }
 
-static void transplant(struct tree_set * set, struct key_value * u, struct key_value * v) {
+static void transplant(set_t * set, struct key_value * u, struct key_value * v) {
 	if (u->parent == set->null) {
 		set->root = v;
 	}
@@ -272,7 +282,7 @@ static void transplant(struct tree_set * set, struct key_value * u, struct key_v
 	v->parent = u->parent;
 }
 
-static struct key_value * minimum(struct tree_set * set, struct key_value * node) {
+static struct key_value * minimum(set_t * set, struct key_value * node) {
 	struct key_value * x = node;
 	while (x != set->null) {
 		node = x;
@@ -281,7 +291,7 @@ static struct key_value * minimum(struct tree_set * set, struct key_value * node
 	return node;
 }
 
-static struct key_value * maximum(struct tree_set * set, struct key_value * node) {
+static struct key_value * maximum(set_t * set, struct key_value * node) {
 	struct key_value * x = node;
 	while (x != set->null) {
 		node = x;
@@ -290,7 +300,7 @@ static struct key_value * maximum(struct tree_set * set, struct key_value * node
 	return node;
 }
 
-static void left_rotate(struct tree_set *set, struct key_value * node) {
+static void left_rotate(set_t *set, struct key_value * node) {
 	struct key_value * y = node->right;
 	node->right = y->left;
 	if (y->left != set->null) {
@@ -310,7 +320,7 @@ static void left_rotate(struct tree_set *set, struct key_value * node) {
 	node->parent = y;
 }
 
-static void right_rotate(struct tree_set *set, struct key_value * node) {
+static void right_rotate(set_t *set, struct key_value * node) {
 	struct key_value * y = node->left;
 	node->left = y->right;
 	if (y->right != set->null) {
@@ -330,12 +340,12 @@ static void right_rotate(struct tree_set *set, struct key_value * node) {
 	node->parent = y;
 }
 
-static void tree_info(struct tree_set * set) {
+static void tree_info(set_t * set) {
 	struct key_value * node = set->root;
 	recursive_node_info(set, node);
 }
 
-static void recursive_node_info(struct tree_set * set, struct key_value * node) {
+static void recursive_node_info(set_t * set, struct key_value * node) {
 	if (node != set->null) {
 		node_info(node);
 		recursive_node_info(set, node->left);

@@ -24,16 +24,12 @@ struct tree_set {
 	struct key_value * root;
 	int item_size;
 	int size;
-	int (*is_empty) (struct tree_set *set);
-	void *(*get) (struct tree_set *set, int key);
-	void (*resize) (struct tree_set *set, int size);
-	int (*insert) (struct tree_set *set, int key, void (*value));
-	int (*remove) (struct tree_set * set, int key);
 };
 
-struct tree_set * new_tree_set();
+struct tree_set * new_tree_set(void);
 
 static int is_empty(struct tree_set *set);
+static int is_key(struct tree_set *set, int key);
 static void * get(struct tree_set *set, int key);
 static int * keys(struct tree_set *set);
 static int insert(struct tree_set *set, int key, void * value);
