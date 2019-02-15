@@ -1,6 +1,6 @@
 #Compilador
-COMP = cc -c
-LINK = cc
+COMP = gcc -c
+LINK = gcc
 
 OBJDIR = objects
 #Programas intermedios
@@ -11,9 +11,6 @@ PROGRAM = program
 
 .PHONY: all clean
 
-dependencies:
-	$(COMP) ordered_list.c ordered_list.h
-
 all: $(PROGRAM)
 
 clean:
@@ -22,16 +19,16 @@ clean:
 	rmdir $(OBJDIR)
 
 $(PROGRAM): $(OBJECTS)
-	$(LINK) $(OBJECTS) -o $(PROGRAM)
+	$(LINK) -o $(PROGRAM) $(OBJECTS)
 
 $(OBJDIR)/main.o: main.c $(OBJDIR) ordered_list.h schema.h
-	$(COMP) main.c -o $(OBJDIR)/main.o
+	$(COMP) -o $(OBJDIR)/main.o main.c
 
 $(OBJDIR)/ordered_list.o: ordered_list.c $(OBJDIR) ordered_list.h
-	$(COMP) ordered_list.c -o $(OBJDIR)/ordered_list.o
+	$(COMP) -o $(OBJDIR)/ordered_list.o ordered_list.c
 
 $(OBJDIR)/schema.o: schema.c $(OBJDIR) schema.h
-	$(COMP) schema.c -o $(OBJDIR)/schema.o
+	$(COMP) -o $(OBJDIR)/schema.o schema.c
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
