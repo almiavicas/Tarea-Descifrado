@@ -21,7 +21,7 @@ clean:
 $(PROGRAM): $(OBJECTS)
 	$(LINK) -o $(PROGRAM) $(OBJECTS)
 
-$(OBJDIR)/main.o: main.c $(OBJDIR) ordered_list.h schema.h
+$(OBJDIR)/main.o: main.c $(OBJDIR) ordered_list.c schema.c
 	$(COMP) -o $(OBJDIR)/main.o main.c
 
 $(OBJDIR)/ordered_list.o: ordered_list.c $(OBJDIR) ordered_list.h
