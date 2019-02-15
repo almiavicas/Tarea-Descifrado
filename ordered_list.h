@@ -10,25 +10,25 @@ struct item {
 	int key;
 	void * value;
 	struct item * next;
-	struct item * prev;
 };
 
 struct ordered_list {
 	struct item * begin;
 	int size;
-	void *(*get) (struct ordered_list * l, int key);
-	int (*insert) (struct ordered_list * l, int key, void * value);
-	int (*remove) (struct ordered_list * l, int key);
-	int (*is_empty) (struct ordered_list * l);
-	struct item *(*iterator) (struct ordered_list * l);
+};
+
+struct list_iterator {
+	struct item * next;
 };
 
 struct ordered_list * new_ordered_list(void);
-void * get(struct ordered_list * l, int key);
-int insert(struct ordered_list * l, int key, void * value);
-int l_remove(struct ordered_list * l, int key);
-int is_empty(struct ordered_list * l);
+void * list_get(struct ordered_list * l, int key);
+int list_insert(struct ordered_list * l, int key, void * value);
+int list_remove(struct ordered_list * l, int key);
+int list_is_empty(struct ordered_list * l);
 
-struct item * iterator(struct ordered_list * l);
-void * next(struct item * it);
-int has_next(struct item * it);
+struct list_iterator * iterator(struct ordered_list * l);
+void * it_next(struct list_iterator * it);
+int it_has_next(struct list_iterator * it);
+
+void item_info(struct item * it);

@@ -11,7 +11,7 @@ void person_info(struct person * p) {
 	printf("\tperson pointer: %p\n\tperson age: %d\n\tperson name: %s\n", p, p->age, p->name);
 }
 
-list * l;
+list_t * l;
 struct person *person1;
 struct person *person2;
 struct person *person3;
@@ -52,17 +52,17 @@ int main()
 	person3->age = 15;
 	person3->name = "enrique";
 	int inserted;
-	inserted = insert(l, person1->age, person1);
+	inserted = list_insert(l, person1->age, person1);
 	if (!inserted) {
 		fprintf(stderr, "Failed to insert person 1\n");
 		return 0;
 	}
-	insert(l, person2->age, person2);
+	inserted = list_insert(l, person2->age, person2);
 	if (!inserted) {
 		fprintf(stderr, "Failed to insert person 2\n");
 		return 0;
 	}
-	insert(l, person3->age, person3);
+	inserted = list_insert(l, person3->age, person3);
 	if (!inserted) {
 		fprintf(stderr, "Failed to insert person 3\n");
 		return 0;
@@ -71,7 +71,7 @@ int main()
 	struct person * p;
 	printf("getting person 1. its real info is:\n");
 	person_info(person1);
-	p = (struct person *) get(l, 10);
+	p = (struct person *) list_get(l, 10);
 	if (p == NULL) {
 		fprintf(stderr, "failed to get person\n");
 		return 0;
@@ -80,20 +80,20 @@ int main()
 	printf("%p\n", p);
 	printf("getting person 2. its real info is:\n");
 	person_info(person2);
-	p = (struct person *) get(l, 15);
+	p = (struct person *) list_get(l, 20);
 	printf("%s, %d\n", p->name, p->age);
 	printf("%p\n", p);
 	printf("getting person 3. its real info is:\n");
 	person_info(person3);
-	p = (struct person *) get(l, 20);
+	p = (struct person *) list_get(l, 15);
 	printf("%s, %d\n", p->name, p->age);
 	printf("%p\n", p);
-	printf("\n##### Testing iterators #####");
-	struct item * it = iterator(l);
-	while (has_next(it)) { 
-		p = (struct person *) next(it);
+	printf("\n##### Testing iterators #####\n");
+	list_it * it = iterator(l);
+	do {
+		p = (struct person *) it_next(it);
 		printf("%s, %d\n", p->name, p->age);
 		printf("%p\n", p);
-	}
+	} while (it_has_next(it));
 	return 0;
 }

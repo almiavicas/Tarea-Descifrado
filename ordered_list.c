@@ -2,16 +2,18 @@
 #include <stdlib.h>
 #include "ordered_list.h"
 
-typedef struct ordered_list list;
+typedef struct ordered_list list_t;
+typedef struct list_iterator list_it;
 
 char err_mem[] = "not enought memory";
-char err_emp[] = "set is empty";
+char err_emp[] = "list is empty";
 char err_knf[] = "key not found";
-char err_ful[] = "set is full";
+char err_ful[] = "list is full";
 char err_rep[] = "element key is repeated";
+char err_nit[] = "null pointer in iterator";
 
-list * new_ordered_list() {
-	list * l = malloc(sizeof(list));
+list_t * new_ordered_list() {
+	list_t * l = malloc(sizeof(list_t));
 	if (l == NULL) {
 		fprintf(stderr, "%s\n", err_mem);
 		perror("Error :");
@@ -21,26 +23,24 @@ list * new_ordered_list() {
 	return l;
 };
 
-void * get(list * l, int key) {
-	if (is_empty(l)) {
+void * list_get(list_t * l, int key) {
+	if (list_is_empty(l)) {
 		fprintf(stderr, "%s\n", err_emp);
 		return NULL;
 	}
 	struct item * it = l->begin;
 	while (it != NULL) { 
 		if (it->key == key) {
+			item_info(it);
 			return it->value;
 		}
 		it = it->next;
 	}
-	if (it == NULL) {
-		fprintf(stderr, "%s: %d\n", err_knf, key);
-		return NULL;
-	}
-	return it->value;
+	fprintf(stderr, "%s: %d\n", err_knf, key);
+	return NULL;
 }
 
-int insert(list * l, int key, void * value) {
+int list_insert(list_t * l, int key, void * value) {
 	struct item * new_item = malloc(sizeof(struct item));
 	if (new_item == NULL) {
 		fprintf(stderr, "%s\n", err_mem);
@@ -48,73 +48,84 @@ int insert(list * l, int key, void * value) {
 	}
 	new_item->key = key;
 	new_item->value = value;
-	if (is_empty(l)) {
+	if (list_is_empty(l)) {
 		l->begin = new_item;
 	}
 	else {
+		// Check if the element is to be inserted left to the beginning
 		if (key < l->begin->key) {
 			new_item->next = l->begin;
-			l->begin->prev = new_item;
 			l->begin = new_item;
 		}
+		// Element is going to be inserted at right of the iterator
 		else {
 			struct item * it = l->begin;
-			while (it->key <= key && it->next != NULL) {
+			while (it->next != NULL && it->next->key <= key) {
 				if (it->key == key) {
 					fprintf(stderr, "%s\n", err_rep);
 					return 0;
 				}
 				it = it->next;
 			}
-			it->prev->next = new_item;
-			new_item->prev = it->prev;
-			it->prev = new_item;
-			new_item->next = it;
+			if (it->next != NULL) {
+				new_item->next = it->next;
+			}
+			it->next = new_item;
 		}
 	}
 	l->size++;
 	return 1;
 }
 
-int l_remove(list * l, int key) {
-	if (is_empty(l)) {
+int list_remove(list_t * l, int key) {
+	if (list_is_empty(l)) {
 		fprintf(stderr, "%s\n", err_emp);
 		return 0;
 	}
 	struct item * it = l->begin;
-	while (it != NULL || it->key != key) {
+	struct item * prev;
+	while (it != NULL || it->key <= key) {
+		prev = it;
 		it = it->next;
 	}
-	if (it == NULL) {
+	if (it == NULL || it->key != key) {
 		fprintf(stderr, "%s\n", err_knf);
 		return 0;
 	}
-	if (it->prev != NULL) {
-		it->prev->next = it->next;
-	}
-	if (it->next != NULL) {
-		it->next->prev = it->prev;
-	}
+	prev->next = it->next;
 	free(it->value);
 	free(it);
 	l->size--;
 	return 1;
 }
 
-int is_empty(list * l) {
+int list_is_empty(list_t * l) {
 	return l->size == 0;
 }
 
-struct item * iterator(list * l) {
-	return l->begin;
+list_it * iterator(list_t * l) {
+	list_it * it = malloc(sizeof(list_it));
+	if (it == NULL) {
+		fprintf(stderr, "%s\n", err_mem);
+		return NULL;
+	}
+	it->next = l->begin;
+	return it;
 }
 
-void * next(struct item * it) {
-	void * value = it->value;
-	it = it->next;
-	return value;
+void * it_next(list_it * it) {
+	struct item * next_item = it->next;
+	if (next_item == NULL) {
+		fprintf(stderr, "%s\n", err_nit);
+	}
+	it->next = next_item->next;
+	return next_item->value;
 }
 
-int has_next(struct item * it) {
+int it_has_next(list_it * it) {
 	return it->next != NULL;
+}
+
+void item_info(struct item * it) {
+	printf("Item Info:\n\tpointer: %p\n\tkey: %d\n\tvalue: %p\n\tnext: %p\n", it, it->key, it->value, it->next);
 }
