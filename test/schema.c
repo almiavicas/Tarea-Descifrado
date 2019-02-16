@@ -51,19 +51,19 @@ static int ht_hash(const char* s, const int m) {
 
     // De la A a la Z
     if(65<= letter_as_int <= 90){
-    	hash = letter_as_int - 65;
+        hash = letter_as_int - 65;
     }
 
     // Caso ,
     if(letter_as_int == 44){
-    	printf("Error!\n");
-    	hash = 26;
-    	printf("Hash final: %i\n", hash);
+        printf("Error!\n");
+        hash = 26;
+        printf("Hash final: %i\n", hash);
     }
 
     // Caso !
     if(letter_as_int == 33){
-    	hash = 27;
+        hash = 27;
     }
 
     return hash;
@@ -117,5 +117,5 @@ char* hash_table_search(hash_table* ht, const char* key) {
 
 int main() {
     hash_table* ht = ht_new();
-ht_del_hash_table(ht);
+    ht_del_hash_table(ht);
 }
