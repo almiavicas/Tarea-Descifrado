@@ -3,6 +3,8 @@
 #include <string.h>
 #include "schema.h"
 
+typedef element item;
+
 // Funcion para inicializar los elementos de la tabla de hash
 // Const char* k: Apuntador de clave
 // Const char* v: Apuntador de valor
@@ -16,7 +18,7 @@ static element* ht_new_element(const char* k, const char* v) {
 // Funcion para nicializar nueva tabla de hash
 hash_table* ht_new() {
     hash_table* ht = malloc(sizeof(hash_table)); // Reservo espacio en la memoria
-    ht->size = 28; // Va a tener tama;o 28.
+    ht->size = 512; // Va a tener tama;o 28.
     ht->count = 0; // Por ahora no tiene elementos
     ht->items = calloc((size_t)ht->size, sizeof(element*)); // Lleno todo con 0
     return ht; // Se retorna la tabla de hash
@@ -48,23 +50,8 @@ void ht_del_hash_table(hash_table* ht) {
 static int ht_hash(const char* s, const int m) {
     int hash = 0;
     int letter_as_int = (int)s[0]; // Transforma un caracter a ASCII
+    hash = letter_as_int;    
 
-    // De la A a la Z
-    if(65<= letter_as_int <= 90){
-    	hash = letter_as_int - 65;
-    }
-
-    // Caso ,
-    if(letter_as_int == 44){
-    	printf("Error!\n");
-    	hash = 26;
-    	printf("Hash final: %i\n", hash);
-    }
-
-    // Caso !
-    if(letter_as_int == 33){
-    	hash = 27;
-    }
 
     return hash;
 }
@@ -81,6 +68,15 @@ static int ht_get_hash(const char* s, const int n, const int count) {
 // Key: Clave
 // Value: Valor
 void hash_table_insert(hash_table* ht, const char* key, const char* value) {
+    int a = (int)key[0];
+    if (0<=a && a <= 32) {
+        fprintf(stderr, "%s%d\n", "Caracter invalido 1: ", a);
+        return;
+    }
+    if(97<=a && a<= 122){
+        fprintf(stderr, "%s%d\n", "Caracter invalido 2: ", a);
+        return;
+    }
     element* item = ht_new_element(key, value); //Inicializo el elemento con su valor y clave
     int position = ht_get_hash(item->key, ht->size, 0); // Colisiones
     element* cur_item = ht->items[position]; // Obtiene la posicion del elemento de la estructura a la que apunta la HT.
@@ -112,10 +108,4 @@ char* hash_table_search(hash_table* ht, const char* key) {
         i++;
     } 
     return NULL;
-}
-
-
-int main() {
-    hash_table* ht = ht_new();
-    ht_del_hash_table(ht);
 }
