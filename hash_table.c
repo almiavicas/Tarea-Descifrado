@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "schema.h"
+#include "hash_table.h"
 
 typedef element item;
 

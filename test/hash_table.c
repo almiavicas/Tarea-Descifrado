@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../schema.c"
+#include "../hash_table.c"
 
 struct item {
 	char * key;
