@@ -70,11 +70,11 @@ static int ht_get_hash(const char* s, const int n, const int count) {
 void hash_table_insert(hash_table* ht, const char* key, const char* value) {
     int a = (int)key[0];
     if (0<=a && a <= 32) {
-        fprintf(stderr, "%s%d\n", "Caracter invalido 1: ", a);
+        // fprintf(stderr, "%s%d\n", "Caracter invalido 1: ", a);
         return;
     }
     if(97<=a && a<= 122){
-        fprintf(stderr, "%s%d\n", "Caracter invalido 2: ", a);
+        // fprintf(stderr, "%s%d\n", "Caracter invalido 2: ", a);
         return;
     }
     element* item = ht_new_element(key, value); //Inicializo el elemento con su valor y clave
