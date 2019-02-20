@@ -112,6 +112,7 @@ int list_is_last(struct ordered_list * l, int key) {
 	return i->key == key;
 }
 
+
 list_it * iterator(list_t * l) {
 	list_it * it = malloc(sizeof(list_it));
 	if (it == NULL) {

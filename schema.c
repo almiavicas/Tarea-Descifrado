@@ -126,6 +126,7 @@ char * translate(char * message, hash_table * translate_to) {
 	}
 	return result;
 }
+
 int merge(schema * dest, schema * source) {
 	source->date_parent = dest->date;
 }
