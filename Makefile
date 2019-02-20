@@ -24,7 +24,7 @@ $(PROGRAM): $(OBJECTS)
 $(OBJDIR)/main.o: main.c $(OBJDIR) ordered_list.c schema.c
 	$(COMP) -o $(OBJDIR)/main.o main.c
 
-$(OBJDIR)/ordered_list.o: ordered_list.c $(OBJDIR) ordered_list.h
+$(OBJDIR)/ordered_list.o: ordered_list.c $(OBJDIR) ordered_list.h error.h
 	$(COMP) -o $(OBJDIR)/ordered_list.o ordered_list.c
 
 $(OBJDIR)/schema.o: schema.c $(OBJDIR) schema.h
