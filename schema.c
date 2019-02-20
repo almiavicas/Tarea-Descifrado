@@ -1,116 +1,134 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "error.h"
 #include "schema.h"
+#include "hash_table.c"
 
-// Funcion para inicializar los elementos de la tabla de hash
-// Const char* k: Apuntador de clave
-// Const char* v: Apuntador de valor
-static element* ht_new_element(const char* k, const char* v) {
-    element* i = malloc(sizeof(element)); // Reservo espacio en la memoria
-    i->key = strdup(k); //Guardo una copia en la memoria que acabamos de reservar
-    i->value = strdup(v);
-    return i; // Se retorna el elemento
+
+schema * new_schema(int date) {
+	schema * sc = malloc(sizeof(schema));
+	if (sc == NULL) {
+		fprintf(stderr, "%s\n", err_mem);
+		return NULL;
+	}
+	sc->encryption = malloc(sizeof(hash_table));
+	if (sc->encryption == NULL) {
+		fprintf(stderr, "%s\n", err_mem);
+		free(sc);
+		return NULL;
+	}
+	sc->decryption = malloc(sizeof(hash_table));
+	if (sc->decryption == NULL) {
+		fprintf(stderr, "%s\n", err_mem);
+		free(sc->encryption);
+		free(sc);
+		return NULL;
+	}
+	sc->date = date;
+	sc->date_parent = -1;
+	return sc;
 }
 
-// Funcion para nicializar nueva tabla de hash
-hash_table* ht_new() {
-    hash_table* ht = malloc(sizeof(hash_table)); // Reservo espacio en la memoria
-    ht->size = 28; // Va a tener tama;o 28.
-    ht->count = 0; // Por ahora no tiene elementos
-    ht->items = calloc((size_t)ht->size, sizeof(element*)); // Lleno todo con 0
-    return ht; // Se retorna la tabla de hash
+// Recibe un esquema recien creado y define su encriptacion y decriptacion
+// Pregunta al usuario si quiere hacer merge en caso de que sea posible
+int build_schema(list_t * list, schema * sc, char * encrypted, char * decripted) {
+	if (strlen(encrypted) != strlen(decripted)) {
+		fprintf(stderr, "%s\n", err_message_dif_len);
+		return 0;
+	}
+	while (encrypted) {
+		hash_table_insert(sc->encription, *decripted, *encrypted);
+		hash_table_insert(sc->decription, *encrypted, *decripted);
+		encrypted++;
+		decripted++;
+	}
+	list_it * it = iterator(list);
+	int is_prev_compatible : 1 = 0;
+	int is_next_compatible : 1 = 0;
+	if (it->next->key == sc->date) {
+		// Vemos si este esquema es compatible con su sucesor
+		it_next(it);
+		schema * next = (schema *) it->next->value;
+		is_next_compatible = is_schema_compatible(sc, next);
+	} else {
+		// Vemos si este esquema es compatible con su predecesor
+		while (it->next->next != NULL && it->next->next->key != sc->date) {
+			it_next(it);
+		}
+		schema * prev = (schema *) it->next->value;
+		is_prev_compatible = is_schema_compatible(prev, sc);
+		// Vemos si este esquema es compatible con su sucesor
+		it_next(it);
+		it_next(it);
+		schema * next = (schema *) it->next->value;
+		if (next != NULL) {
+			is_next_compatible = is_schema_compatible(sc, next);
+		}
+	}
+	
+	if (is_prev_compatible) {
+		while () {
+			printf("El esquema agregado es compatible con el esquema anterior de fecha %s.\n Desea unificar ambos esquemas en uno solo?", schema_print_date(prev));
+		}
+	}
+	if (is_next_compatible) {
+
+	}
+	return 1;
 }
 
+int is_schema_compatible(schema * prev, schema * next) {
 
-// Funcion para eliminar elementos de la tabla
-static void ht_del_element(element* i) {
-    free(i->key); //Se libera la clave, luego el valor y por ultimo el elemento
-    free(i->value);
-    free(i);
 }
 
-
-// Funcion para eliminar una tabla. Se elimina elemento por elemento y luego libero la memoria
-void ht_del_hash_table(hash_table* ht) {
-    for (int i = 0; i < ht->size; i++) {
-        element* item = ht->items[i];
-        if (item != NULL) {
-            ht_del_element(item);
-        }
-    }
-    free(ht->items);
-    free(ht);
+schema * schema_get_parent(list_t * list, int date) {
+	schema * sc = (schema *) list_get(list, date);
+	while (sc != NULL && sc->parent_date != -1) {
+		sc = (schema *) list_get(list, sc->parent_date);
+	}
+	return sc;
 }
 
-
-// Funcion de hash para almacenar un caracter en la tabla. Char *s es el caracter y m es 28.
-static int ht_hash(const char* s, const int m) {
-    int hash = 0;
-    int letter_as_int = (int)s[0]; // Transforma un caracter a ASCII
-
-    // De la A a la Z
-    if(65<= letter_as_int <= 90){
-    	hash = letter_as_int - 65;
-    }
-
-    // Caso ,
-    if(letter_as_int == 44){
-    	printf("Error!\n");
-    	hash = 26;
-    	printf("Hash final: %i\n", hash);
-    }
-
-    // Caso !
-    if(letter_as_int == 33){
-    	hash = 27;
-    }
-
-    return hash;
+char * encrypt(list_t * list, int date, char * message) {
+	schema * sc = schema_get_parent(list, date);
+	if (sc == NULL) {
+		fprintf(stderr, "%s\n", err_knf);
+		return NULL;
+	}
+	return translate(message, sc->encryption);
 }
 
-// Doble hash para la colisiones. En este caso, n es 28 y count es el numero de intentos.
-static int ht_get_hash(const char* s, const int n, const int count) {
-    const int hash_a = ht_hash(s,n);
-    const int hash_b = ht_hash(s,n);
-    return (hash_a + (count * (hash_b + 1))) % n;
+char * decrypt(list_t * list, int date, char * message) {
+	schema * sc = schema_get_parent(list, date);
+	if (sc == NULL) {
+		fprintf(stderr, "%s\n", err_knf);
+		return NULL;
+	}
+	return translate(message, sc->decryption);
 }
 
-// Insertar un elemento en la tabla de hash
-// ht: Tabla de hash
-// Key: Clave
-// Value: Valor
-void hash_table_insert(hash_table* ht, const char* key, const char* value) {
-    element* item = ht_new_element(key, value); //Inicializo el elemento con su valor y clave
-    int position = ht_get_hash(item->key, ht->size, 0); // Colisiones
-    element* cur_item = ht->items[position]; // Obtiene la posicion del elemento de la estructura a la que apunta la HT.
-    int i = 1;
-    // General
-    while (cur_item != NULL) {
-        position = ht_get_hash(item->key, ht->size, i);
-        cur_item = ht->items[position];
-        i++;
-    } 
-    ht->count++;
-    ht->items[position] = item;
+char * translate(char * message, hash_table * translate_to) {
+	char * result = "";
+	while (message != NULL) {
+		char * c = *message;
+		if (*c == ' ' || *c == '\t') {
+			result = result + (*c);
+		} else {
+			c = hash_table_search(translate_to, c);
+			if (c == NULL) {
+				result = result + "#";
+			} else {
+				result = result + (*c);
+			}
+		}
+		message++;
+	}
+	return result;
 }
 
-// Buscar un elemento en la tabla
-// ht: Hash Table
-// Key: Clave
-char* hash_table_search(hash_table* ht, const char* key) {
-    int position = ht_get_hash(key, ht->size, 0);
-    element* item = ht->items[position];
-    int i = 1;
-    // Verficamos si la clave del elemento coincide con al clave que estamos buscando.
-    while (item != NULL) {
-        if (strcmp(item->key, key) == 0) {
-            return item->value;
-        }
-        position = ht_get_hash(key, ht->size, i);
-        item = ht->items[position];
-        i++;
-    } 
-    return NULL;
+int merge(schema * dest, schema * source) {
+	source->date_parent = dest->date;
 }
-
+void schema_print(schema * sc);
+int schema_remove(schema *sc);
