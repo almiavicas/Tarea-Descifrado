@@ -104,10 +104,12 @@ int list_is_begin(struct ordered_list *l, int key) {
 
 int list_is_last(struct ordered_list * l, int key) {
 	list_it * it = iterator(l);
+	struct item * i;
 	while (it_has_next(it)) {
+		i = it->next;
 		it_next(it);
 	}
-	return it->key == key;
+	return i->key == key;
 }
 
 list_it * iterator(list_t * l) {
