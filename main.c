@@ -4,7 +4,7 @@
 //#include "schema.c"
 #include "hash_table.c"
 //#include "ordered_list.c"
-
+//
 void print(){
 	printf("1. Registrar nuevos mensajes cifrados y sus descifrados. \n");
 	printf("2. Descrifrar mensajes \n");
