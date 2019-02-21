@@ -109,3 +109,20 @@ char* hash_table_search(hash_table* ht, const char* key) {
     } 
     return NULL;
 }
+
+char * hash_table_keys(hash_table * ht) {
+    char * keys;
+    int i = 0;
+    int count = ht->count;
+    element ** items = ht->items;
+    while (count > 0) {
+        if (*items != NULL) {
+            keys[i] = *(*items)->key;
+            i++;
+            count--;
+        }
+        items++;
+    }
+    key[i] = '\0';
+    return keys;
+}

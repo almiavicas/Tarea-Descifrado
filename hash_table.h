@@ -26,3 +26,5 @@ char* hash_table_search(hash_table* ht, const char* key);
 
 // Eliminar un elemento
 void hash_table_delete(hash_table* h, const char* key);
+
+char * hash_table_keys(hash_table * ht);
