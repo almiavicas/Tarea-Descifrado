@@ -123,6 +123,6 @@ char * hash_table_keys(hash_table * ht) {
         }
         items++;
     }
-    key[i] = '\0';
+    keys[i] = '\0';
     return keys;
 }

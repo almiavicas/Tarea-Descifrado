@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "error.h"
 #include "schema.h"
-#include "hash_table.c"
 
 
 schema * new_schema(int date) {
