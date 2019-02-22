@@ -62,6 +62,7 @@ int list_insert(list_t * l, int key, void * value) {
 				}
 				it = it->next;
 			}
+			
 			if (it->next != NULL) {
 				new_item->next = it->next;
 			}
