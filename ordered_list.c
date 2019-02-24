@@ -1,16 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ordered_list.h"
+#include "error.h"
 
 typedef struct ordered_list list_t;
 typedef struct list_iterator list_it;
-
-char err_mem[] = "not enought memory";
-char err_emp[] = "list is empty";
-char err_knf[] = "key not found";
-char err_ful[] = "list is full";
-char err_rep[] = "element key is repeated";
-char err_nit[] = "null pointer in iterator";
 
 list_t * new_ordered_list() {
 	list_t * l = malloc(sizeof(list_t));
@@ -67,6 +61,7 @@ int list_insert(list_t * l, int key, void * value) {
 				}
 				it = it->next;
 			}
+			
 			if (it->next != NULL) {
 				new_item->next = it->next;
 			}
@@ -102,6 +97,21 @@ int list_remove(list_t * l, int key) {
 int list_is_empty(list_t * l) {
 	return l->size == 0;
 }
+
+int list_is_begin(struct ordered_list *l, int key) {
+	return l->begin->key == key;
+}
+
+int list_is_last(struct ordered_list * l, int key) {
+	list_it * it = iterator(l);
+	struct item * i;
+	while (it_has_next(it)) {
+		i = it->next;
+		it_next(it);
+	}
+	return i->key == key;
+}
+
 
 list_it * iterator(list_t * l) {
 	list_it * it = malloc(sizeof(list_it));
