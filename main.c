@@ -24,7 +24,7 @@ int main() {
 	    scanf("%i",&option);
 	    getchar();
 
-	    // Registrar nuevos mensajes cifrados y sus descifrados
+	    // Registrar nuevos mensajes cifrados y sus descifrados ////////////////////////////////
 	    if(option == 1)
 	    {
 	    	char * message1 = malloc(100000);
@@ -61,7 +61,7 @@ int main() {
 	    // Descifrar mensajes
 	    else if(option == 2)
 	    {
-	    	char * message;
+	    	char * message = malloc(100000);
 	    	int fecha;
 	    	char *message_;
 
@@ -82,31 +82,43 @@ int main() {
 	    // Cifrar mensajes
 	    else if(option == 3)
 	    {
-	     	char * message;
+	     	char * message = malloc(100000);
 	    	int fecha;
 	    	char *message_;
 
-	    	printf("Inserte el mensaje descifrado: ");
+	    	printf("Inserte el mensaje cifrado: ");
 	        scanf("%[^\n]",message);
     		getchar();
 
-    		printf("Inserte la fecha en formato yyyymmdd: ");
-	        scanf("%d",&fecha);
-    		getchar();
+    		printf("Inserte la fecha en formato yyyymmdd");
+    		scanf("%d",&fecha);
+    		printf("%i\n", fecha);
 
-    		message_ = encrypt(list, fecha, message);
+    		message_=encrypt(list,fecha,message);
 
-    		printf("%s\n", message_);
+			printf("%s\n", message_);
    
 	    }
 	    // Mostrar un esquema cifrado
-	    else if(option == 4)
-	    {
+	    else if(option == 4){
+
+			int fecha;
+			printf("Inserte la fecha en formato yyyymmdd");
+    		scanf("%d",&fecha);
+    		printf("%i\n", fecha);
+    		schema_print(schema_get_parent(list,fecha));
+	    	
+	    
 	        
 	    }
 	    // Borrar un esquema cifrado debido a un error
 	    else if(option == 5)
 	    {
+	    	int fecha;
+			printf("Inserte la fecha en formato yyyymmdd");
+    		scanf("%d",&fecha);
+    		//printf("%i\n", fecha);
+    		schema_remove(schema_get_parent(list,fecha));	
 	    	   
 	    }
 	    // Error
