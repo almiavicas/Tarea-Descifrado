@@ -2,15 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include "schema.c"
-//#include "hash_table.c"
-//#include "ordered_list.c"
-//
+
+
 void print(){
-	printf("1. Registrar nuevos mensajes cifrados y sus descifrados. \n");
-	printf("2. Descrifrar mensajes \n");
-    printf("3. Cifrar mensajes. \n");
-    printf("4. Mostrar un esquema de cifrado. \n");
-    printf("5. Borrar un esquema de cifrado debido a un error \n");
+	printf("\t1. Registrar nuevos mensajes cifrados y sus descifrados. \n");
+	printf("\t2. Descrifrar mensajes \n");
+    printf("\t3. Cifrar mensajes. \n");
+    printf("\t4. Mostrar un esquema de cifrado. \n");
+    printf("\t5. Borrar un esquema de cifrado debido a un error \n");
 }
 
 int main() {
@@ -47,6 +46,17 @@ int main() {
 	        printf("%s\n", message1);
 	        printf("%s\n", message2);
 
+	        // Procesamiento de datos
+	        schema * sc = new_schema(fecha);
+	        list_insert(list, fecha, sc);
+	        int schema_built = build_schema(list, sc, message1, message2);
+	        if (schema_built) {
+	        	printf("Se inserto el esquema en la lista de esquemas\n");
+	        }
+	        else {
+	        	printf("Ocurrio un error al crear el esquema\n");
+	        }
+
 	    }
 	    // Descifrar mensajes
 	    else if(option == 2)
@@ -59,11 +69,11 @@ int main() {
 	        scanf("%[^\n]",message);
     		getchar();
 
-    		printf("Inserte la fecha en formato yyyy/mm/dd");
+    		printf("Inserte la fecha en formato yyyymmdd");
     		scanf("%d",&fecha);
     		printf("%i\n", fecha);
 
-    		message_=encrypt(list,fecha,message);
+    		message_=decrypt(list,fecha,message);
 
 			printf("%s\n", message_);
     		
@@ -72,16 +82,21 @@ int main() {
 	    // Cifrar mensajes
 	    else if(option == 3)
 	    {
-	     	char message[100];
-	    	int fecha;  
+	     	char * message;
+	    	int fecha;
+	    	char *message_;
 
-	    	printf("Inserte el mensaje cifrado: ");
+	    	printf("Inserte el mensaje descifrado: ");
 	        scanf("%[^\n]",message);
     		getchar();
 
-    		printf("Inserte la fecha en formato DDMMAAAA: ");
+    		printf("Inserte la fecha en formato yyyymmdd: ");
 	        scanf("%d",&fecha);
     		getchar();
+
+    		message_ = encrypt(list, fecha, message);
+
+    		printf("%s\n", message_);
    
 	    }
 	    // Mostrar un esquema cifrado
