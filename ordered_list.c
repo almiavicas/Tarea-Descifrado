@@ -6,10 +6,6 @@
 typedef struct ordered_list list_t;
 typedef struct list_iterator list_it;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> maga
 list_t * new_ordered_list() {
 	list_t * l = malloc(sizeof(list_t));
 	if (l == NULL) {
