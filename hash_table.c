@@ -55,7 +55,7 @@ static int ht_hash(const char* s) {
 static int ht_get_hash(const char* s, const int n, const int count) {
     const int hash_a = ht_hash(s);
     const int hash_b = ht_hash(s);
-    printf("%d %c\n", hash_a, hash_a);
+    //printf("%d %c\n", hash_a, hash_a);
     return (hash_a + (count * (hash_b + 1))) % n;
 }
 
@@ -65,9 +65,7 @@ static int ht_get_hash(const char* s, const int n, const int count) {
 // Value: Valor
 void hash_table_insert(hash_table* ht, const char* key, const char* value) {
     // Check if the key is alredy added in the table
-    if (hash_table_search(ht, key) == NULL) {
-        return;
-    }
+
     int a = (int)key[0];
     if (0<=a && a <= 32) {
         // fprintf(stderr, "%s%d\n", "Caracter invalido 1: ", a);
@@ -77,19 +75,21 @@ void hash_table_insert(hash_table* ht, const char* key, const char* value) {
         // fprintf(stderr, "%s%d\n", "Caracter invalido 2: ", a);
         return;
     }
-    printf("Hash size: %d\n", ht->size);
+   
+
     element* item = ht_new_element(key, value); //Inicializo el elemento con su valor y clave
     //printf("..\n");
     int position = ht_get_hash(item->key, ht->size, 0); // Colisiones
-
-    //printf("..\n");
+ 
     element* cur_item = ht->items[position]; // Obtiene la posicion del elemento de la estructura a la que apunta la HT.
+
+    //printf("este es %i\n", cur_item);
     int i = 1;
     // General
     while (cur_item != NULL) {
-        position = ht_get_hash(item->key, ht->size, i);
-        cur_item = ht->items[position];
-        i++;
+        //printf("%c", cur_item);
+        return;
+  
     } 
     ht->count++;
     ht->items[position] = item;
@@ -97,17 +97,30 @@ void hash_table_insert(hash_table* ht, const char* key, const char* value) {
 
 // Buscar un elemento en la tabla
 // ht: Hash Table
-// Key: Clave
-char* hash_table_search(hash_table* ht, const char* key) {
+// Key: Clave.. UNA
+char* hash_table_search(hash_table* ht, const char *key) {
+    //printf("entro");
+    char* numeral = "#";
+    char* ejemplo ="";
     int position = ht_get_hash(key, ht->size, 0);
-    printf("%d\n", position);
+    //printf("entro");
+    //printf("count>%i\n", ht->count);
     element* item = ht->items[position];
-    printf("item referenciado\n");
+    //printf("%p\n", item);
+    
+    //printf("item referenciado\n");
     int i = 1;
-    printf("%p\n", item);
+    //printf("key: %c\n", key);
     // Verficamos si la clave del elemento coincide con al clave que estamos buscando.
+    if (ht->items[position]==NULL){
+        return numeral;
+    }
+    return item->value;
+    
+    /*
     while (item != NULL) {
-        printf("item referenciado\n");
+
+        //printf("item referenciado\n");
         if (strcmp(item->key, key) == 0) {
 
             return item->value;
@@ -119,8 +132,11 @@ char* hash_table_search(hash_table* ht, const char* key) {
 
         i++;
     } 
-    printf("item referenciado\n");
-    return NULL;
+    printf("entro");
+    //printf("item referenciado\n");
+    return item->value;
+    // decia retunr null
+    */
 }
 
 char * hash_table_keys(hash_table * ht) {
@@ -138,4 +154,21 @@ char * hash_table_keys(hash_table * ht) {
     }
     keys[i] = '\0';
     return keys;
+}
+
+char * hash_table_keys_values(hash_table * ht) {
+    char * value = malloc(sizeof(char));
+    int i = 0;
+    int count = ht->count;
+    element ** items = ht->items;
+    while (count > 0) {
+        if (*items != NULL) {
+            value[i] = *(*items)->value;
+            i++;
+            count--;
+        }
+        items++;
+    }
+    value[i] = '\0';
+    return value;
 }

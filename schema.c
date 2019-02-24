@@ -40,18 +40,22 @@ int build_schema(list_t * list, schema * sc, char * encrypted, char * decrypted)
 	char * dec_c = malloc(sizeof(char));
 	int len = strlen(encrypted);
 	while (len--) {
+		//printf("entro");
 		enc_c[0] = encrypted[0];
+
 		dec_c[0] = decrypted[0];
+		//printf("ajaaaaaaaaa%c epale", enc_c[0]);
 		hash_table_insert(sc->encryption, dec_c, enc_c);
 		hash_table_insert(sc->decryption, enc_c, dec_c);
 		encrypted++;
 		decrypted++;
 	}
+	//printf("numero de aaa%i\n", sc->decryption->count);
 	printf("Added to hash_table\n");
 
 
 	list_it * it = iterator(list);
-	printf("Created iterator\n");
+	//printf("Created iterator\n");
 	int is_prev_compatible = 0;
 	int is_next_compatible = 0;
 	schema * prev;
@@ -139,7 +143,7 @@ int build_schema(list_t * list, schema * sc, char * encrypted, char * decrypted)
 int is_schema_compatible(schema * prev, schema * next) {
 	char * keys = hash_table_keys(next->encryption);
 
-	printf("Obtiene claves\n");
+	//printf("Obtiene claves\n");
 	char * prev_value;
 	char * next_value;
 	while (*keys != '\0') {
@@ -156,20 +160,24 @@ int is_schema_compatible(schema * prev, schema * next) {
 }
 
 schema * schema_get_parent(list_t * list, int date) {
+	//printf("hola");
 	schema * sc = (schema *) list_get(list, date);
 	while (sc != NULL && sc->parent_date != -1) {
 		schema_print(sc);
 		sc = (schema *) list_get(list, sc->parent_date);
 	}
-	return sc;
+	return sc; // Schema parent
 }
 
 char * encrypt(list_t * list, int date, char * message) {
 	schema * sc = schema_get_parent(list, date);
+	//schema_print(sc);
 	if (sc == NULL) {
+		printf("hola");
 		fprintf(stderr, "%s\n", err_knf);
 		return NULL;
 	}
+	//printf("holaaa");
 	schema_print(sc);
 	return translate(message, sc->encryption);
 }
@@ -183,31 +191,54 @@ char * decrypt(list_t * list, int date, char * message) {
 	return translate(message, sc->decryption);
 }
 
-char * translate(char * message, hash_table * translate_to) {
-	char * result = "";
+char* translate(char * message, hash_table * translate_to) {
+	char * space = " ";
 	char * numeral = "#";
-	printf("Mensaje: %s\n", message);
+	char * final;
+	char * retornar = malloc(10000000);
+	//printf("holaaa\n");
+	//printf("Mensaje: %s\n", message);
 	while (message != NULL) {
 		char c = message[0];
-		printf("probando\n");
-		if (c == ' ' || c == '\t') {
-			strcat(result, &c);
+		char *pChar = &c;
+		//printf("ascii caracter %if\n", c);
+		//printf("Entro en el while\n");
+		//printf("result : %s\n", result);
+		if(c == 0){
+			//return result;
+			//printf("%s\n", retornar);
+			return retornar;
+		}
+		if ((int)c == 32 || c == '\t') {
+			//printf("Entro en el if\n");
+			strcat(retornar, space);
 		} else {
-			printf("probando, caracter %c\n", c);
-			c = *hash_table_search(translate_to, message);
-			printf("probando\n");
+			//printf("No entro en el if\n");
+			//printf("caracter %c\n", c);
+			//printf("mensaje %s\n", message);
+			//printf("%c\n", *pChar);
+			final = hash_table_search(translate_to, pChar);
+			//printf("hola");
+			//strcat(retornar,final);
+			//printf("result> %s\n", result);
 			if (c == '\0') {
-
-				strcat(result, numeral);
+				//printf("entrooooooooooooooooooooooo al caract nuloooo");
+				strcat(retornar, numeral);
+				//return result;
+				//printf("esto es lo que estoy retornando%s\n", retornar);
+				return retornar;
 			} else {
-				strcat(result, &c);
+				strcat(retornar,final);
+				//strcat(result, &c);
 			}
 		}
 		message++;
 	}
-	printf("Translation complete");
-	return result;
+	//printf("Translation complete");
+	//return result;
 }
+
+
 
 int merge(list_t * list, schema * dest, schema * source) {
 	if (dest->parent_date != -1) {
@@ -283,33 +314,23 @@ char * schema_print_date(int date) {
 }
 
 void schema_print(schema * sc) {
-	printf("Schema pointer %p of date %d:\n\tParent date: %d\n\t Encryption:\n\t", sc, sc->date, sc->parent_date);
+	printf("Schema pointer %p of date %d:\n\tParent date: %d\n\tEncryption:\n\t", sc, sc->date, sc->parent_date);
+
 	char * keys = hash_table_keys(sc->encryption);
 	char * value;
-	while (*keys != '\0') {
-		printf("%s ", keys);
-		keys++;
-	}
+	printf("\t%s ", keys);
+
 	printf("\n\t");
-	keys = hash_table_keys(sc->encryption);
-	while (*keys != '\0') {
-		value = hash_table_search(sc->encryption, keys);
-		printf("%s ", value);
-		keys++;
-	}
-	printf("\nDecryption:\n\t");
+
+	keys = hash_table_keys_values(sc->encryption);
+	printf("\t%s ", keys);
+
+	
+	printf("\n\tDecryption:\n\t");
 	keys = hash_table_keys(sc->decryption);
-	while (*keys != '\0') {
-		printf("%s ", keys);
-		keys++;
-	}
-	printf("\n\t");
-	keys = hash_table_keys(sc->decryption);
-	while (*keys != '\0') {
-		value = hash_table_search(sc->decryption, keys);
-		printf("%s ", value);
-		keys++;
-	}
+	printf("\t%s\n\t", keys);
+	keys = hash_table_keys_values(sc->decryption);
+	printf("\t%s\n ", keys);
 }
 int schema_remove(schema *sc) {
 	free(sc->encryption);
