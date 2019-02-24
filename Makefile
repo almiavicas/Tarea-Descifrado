@@ -5,6 +5,7 @@ LINK = gcc
 OBJDIR = objects
 #Programas intermedios
 OBJECTS = $(OBJDIR)/ordered_list.o $(OBJDIR)/schema.o $(OBJDIR)/main.o
+DEPEND = $(OBJDIR)/main.o
 
 #Programa
 PROGRAM = program
@@ -19,7 +20,7 @@ clean:
 	rmdir $(OBJDIR)
 
 $(PROGRAM): $(OBJECTS)
-	$(LINK) -o $(PROGRAM) $(OBJECTS)
+	$(LINK) -o $(PROGRAM) $(DEPEND)
 
 $(OBJDIR)/main.o: main.c $(OBJDIR) ordered_list.c schema.c
 	$(COMP) -o $(OBJDIR)/main.o main.c
