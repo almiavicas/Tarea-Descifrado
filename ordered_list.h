@@ -1,11 +1,5 @@
 #include <stdio.h>
 
-char err_mem[];
-char err_emp[];
-char err_knf[];
-char err_ful[];
-char err_rep[];
-
 struct item {
 	int key;
 	void * value;
@@ -26,6 +20,8 @@ void * list_get(struct ordered_list * l, int key);
 int list_insert(struct ordered_list * l, int key, void * value);
 int list_remove(struct ordered_list * l, int key);
 int list_is_empty(struct ordered_list * l);
+int list_is_begin(struct ordered_list *l, int key);
+int list_is_last(struct ordered_list * l, int key);
 
 struct list_iterator * iterator(struct ordered_list * l);
 void * it_next(struct list_iterator * it);
