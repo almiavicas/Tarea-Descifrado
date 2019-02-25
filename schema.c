@@ -162,7 +162,7 @@ schema * schema_get_parent(list_t * list, int date) {
 	//printf("hola");
 	schema * sc = (schema *) list_get(list, date);
 	while (sc != NULL && sc->parent_date != -1) {
-		schema_print(sc);
+		//schema_print(sc);
 		sc = (schema *) list_get(list, sc->parent_date);
 	}
 	return sc; // Schema parent
@@ -172,12 +172,12 @@ char * encrypt(list_t * list, int date, char * message) {
 	schema * sc = schema_get_parent(list, date);
 	//schema_print(sc);
 	if (sc == NULL) {
-		printf("hola");
+		//printf("hola");
 		fprintf(stderr, "%s\n", err_knf);
-		return NULL;
+		return err_knf;
 	}
 	//printf("holaaa");
-	schema_print(sc);
+	//schema_print(sc);
 	return translate(message, sc->encryption);
 }
 
@@ -185,7 +185,7 @@ char * decrypt(list_t * list, int date, char * message) {
 	schema * sc = schema_get_parent(list, date);
 	if (sc == NULL) {
 		fprintf(stderr, "%s\n", err_knf);
-		return NULL;
+		return err_knf;
 	}
 	return translate(message, sc->decryption);
 }
@@ -200,6 +200,7 @@ char* translate(char * message, hash_table * translate_to) {
 	while (message != NULL) {
 		char c = message[0];
 		char *pChar = &c;
+		//printf("retornar: %s\n", retornar);
 		//printf("ascii caracter %if\n", c);
 		//printf("Entro en el while\n");
 		//printf("result : %s\n", result);
@@ -313,6 +314,10 @@ char * schema_print_date(int date) {
 }
 
 void schema_print(schema * sc) {
+
+	if (sc == NULL){
+		return;
+	}
 	printf("Schema pointer %p of date %d:\n\tParent date: %d\n\tEncryption:\n\t", sc, sc->date, sc->parent_date);
 
 	char * keys = hash_table_keys(sc->encryption);
@@ -332,7 +337,10 @@ void schema_print(schema * sc) {
 	printf("\t%s\n ", keys);
 }
 
-int schema_remove(schema *sc) {
+void schema_remove(schema *sc) {
+	if (sc ==NULL){
+		return ;
+	}
 	free(sc->encryption);
 	free(sc->decryption);
 	free(sc);

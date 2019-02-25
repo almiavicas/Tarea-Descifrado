@@ -23,5 +23,5 @@ char * decrypt(list_t * list, int date, char * message);
 int merge(list_t * list, schema * dest, schema * source);
 void schema_print(schema * sc);
 char * schema_print_date(int date);
-int schema_remove(schema *sc);
+void schema_remove(schema *sc);
 int is_character_valid(char * c);
