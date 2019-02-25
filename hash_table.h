@@ -27,4 +27,8 @@ char* hash_table_search(hash_table* ht, const char* key);
 // Eliminar un elemento
 void hash_table_delete(hash_table* h, const char* key);
 
+// Busca las claves de una tabla de hash
 char * hash_table_keys(hash_table * ht);
+
+// Busca los valores de las claves de una tabla de hash
+char * hash_table_keys_values(hash_table * ht);

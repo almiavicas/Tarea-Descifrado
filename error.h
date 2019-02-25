@@ -1,3 +1,5 @@
+// Common erros
+
 char err_mem[] = "not enought memory";
 char err_emp[] = "list is empty";
 char err_knf[] = "key not found";
