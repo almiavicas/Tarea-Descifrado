@@ -25,7 +25,6 @@ void * list_get(list_t * l, int key) {
 	struct item * it = l->begin;
 	while (it != NULL) { 
 		if (it->key == key) {
-			//item_info(it);/////////////////// no poner
 			return it->value;
 		}
 		it = it->next;
