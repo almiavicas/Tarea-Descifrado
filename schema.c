@@ -38,11 +38,8 @@ int build_schema(list_t * list, schema * sc, char * encrypted, char * decrypted)
 	char * dec_c = malloc(sizeof(char));
 	int len = strlen(encrypted);
 	while (len--) {
-		//printf("entro");
 		enc_c[0] = encrypted[0];
-
 		dec_c[0] = decrypted[0];
-		//printf("ajaaaaaaaaa%c epale", enc_c[0]);
 		hash_table_insert(sc->encryption, dec_c, enc_c);
 		hash_table_insert(sc->decryption, enc_c, dec_c);
 		encrypted++;
@@ -57,7 +54,6 @@ int build_schema(list_t * list, schema * sc, char * encrypted, char * decrypted)
 	schema * next;
 	if (it->next != NULL && it->next->key == sc->date) {
 		// Vemos si este esquema es compatible con su sucesor
-		printf("Chequea sucesor 1\n");
 		it_next(it);
 		if (it->next == NULL) {
 			return 1;
@@ -66,7 +62,6 @@ int build_schema(list_t * list, schema * sc, char * encrypted, char * decrypted)
 		is_next_compatible = is_schema_compatible(sc, next);
 	} else {
 		// Vemos si este esquema es compatible con su predecesor
-		printf("Chequea predecesor 2\n");
 		if (it->next == NULL) {
 			// No hay mas nadie en la lista, no hay que verificar merge
 			return 1;
@@ -75,19 +70,15 @@ int build_schema(list_t * list, schema * sc, char * encrypted, char * decrypted)
 			it_next(it);
 		}
 		prev = (schema *) it->next->value;
-		printf("Chequea compatibilidad\n");
 		is_prev_compatible = is_schema_compatible(prev, sc);
-		printf("Chequea sucesor\n");
 		// Vemos si este esquema es compatible con su sucesor
 		it_next(it);
 		it_next(it);
 		if (it->next != NULL) {
 			next = (schema *) it->next->value;
-			printf("Chequea compatibilidad\n");
 			is_next_compatible = is_schema_compatible(sc, next);
 		}
 	}
-	printf("Inicia proceso de preguntas\n");
 	char * ans = malloc(sizeof(char));
 	char * si = malloc(sizeof(char));
 	si = "si";
@@ -101,7 +92,6 @@ int build_schema(list_t * list, schema * sc, char * encrypted, char * decrypted)
 			scanf("%s", ans);
 			if (strcmp(si, ans) == 0 || strcmp(no, ans) == 0) {
 				if (strcmp(si, ans) == 0) {
-					printf("merging\n");
 					merge(list, prev, sc);
 				}
 				break;
@@ -118,7 +108,6 @@ int build_schema(list_t * list, schema * sc, char * encrypted, char * decrypted)
 			scanf("%s", ans);
 			if (strcmp(si, ans) == 0 || strcmp(no, ans) == 0) {
 				if (strcmp(si, ans) == 0) {
-					printf("merging\n");
 					merge(list, next, sc);
 				}
 				break;
@@ -155,25 +144,19 @@ int is_schema_compatible(schema * prev, schema * next) {
 }
 
 schema * schema_get_parent(list_t * list, int date) {
-	//printf("hola");
 	schema * sc = (schema *) list_get(list, date);
 	while (sc != NULL && sc->parent_date != -1) {
-		//schema_print(sc);
 		sc = (schema *) list_get(list, sc->parent_date);
 	}
-	return sc; // Schema parent
+	return sc; 
 }
 
 char * encrypt(list_t * list, int date, char * message) {
 	schema * sc = schema_get_parent(list, date);
-	//schema_print(sc);
 	if (sc == NULL) {
-		//printf("hola");
 		fprintf(stderr, "%s\n", err_knf);
 		return err_knf;
 	}
-	//printf("holaaa");
-	//schema_print(sc);
 	return translate(message, sc->encryption);
 }
 
@@ -191,47 +174,25 @@ char* translate(char * message, hash_table * translate_to) {
 	char * numeral = "#";
 	char * final;
 	char * retornar = malloc(10000000);
-	//printf("holaaa\n");
-	//printf("Mensaje: %s\n", message);
 	while (message != NULL) {
 		char c = message[0];
 		char *pChar = &c;
-		//printf("retornar: %s\n", retornar);
-		//printf("ascii caracter %if\n", c);
-		//printf("Entro en el while\n");
-		//printf("result : %s\n", result);
 		if(c == 0){
-			//return result;
-			//printf("%s\n", retornar);
 			return retornar;
 		}
 		if ((int)c == 32 || c == '\t') {
-			//printf("Entro en el if\n");
 			strcat(retornar, space);
 		} else {
-			//printf("No entro en el if\n");
-			//printf("caracter %c\n", c);
-			//printf("mensaje %s\n", message);
-			//printf("%c\n", *pChar);
 			final = hash_table_search(translate_to, pChar);
-			//printf("hola");
-			//strcat(retornar,final);
-			//printf("result> %s\n", result);
 			if (c == '\0') {
-				//printf("entrooooooooooooooooooooooo al caract nuloooo");
 				strcat(retornar, numeral);
-				//return result;
-				//printf("esto es lo que estoy retornando%s\n", retornar);
 				return retornar;
 			} else {
 				strcat(retornar,final);
-				//strcat(result, &c);
 			}
 		}
 		message++;
 	}
-	//printf("Translation complete");
-	//return result;
 }
 
 
