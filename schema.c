@@ -30,7 +30,6 @@ schema * new_schema(int date) {
 // Recibe un esquema recien creado y define su encriptacion y decriptacion
 // Pregunta al usuario si quiere hacer merge en caso de que sea posible
 int build_schema(list_t * list, schema * sc, char * encrypted, char * decrypted) {
-	printf("Building schema\n");
 	if (strlen(encrypted) != strlen(decrypted)) {
 		fprintf(stderr, "%s\n", err_message_dif_len);
 		return 0;
@@ -49,12 +48,9 @@ int build_schema(list_t * list, schema * sc, char * encrypted, char * decrypted)
 		encrypted++;
 		decrypted++;
 	}
-	//printf("numero de aaa%i\n", sc->decryption->count);
-	printf("Added to hash_table\n");
 
 
 	list_it * it = iterator(list);
-	//printf("Created iterator\n");
 	int is_prev_compatible = 0;
 	int is_next_compatible = 0;
 	schema * prev;
