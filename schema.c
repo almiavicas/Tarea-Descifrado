@@ -102,7 +102,7 @@ int build_schema(list_t * list, schema * sc, char * encrypted, char * decrypted)
 	if (is_prev_compatible) {
 		aux = schema_print_date(prev->date);
 		while (1) {
-			printf("El esquema agregado es compatible con el esquema anterior de fecha %s.\n Desea unificar ambos esquemas en uno solo? (responda s/n): ", aux);
+			printf("El esquema agregado es compatible con el esquema anterior de fecha %s.\n Desea unificar ambos esquemas en uno solo? (responda si/no): ", aux);
 			scanf("%s", ans);
 			if (strcmp(si, ans) == 0 || strcmp(no, ans) == 0) {
 				if (strcmp(si, ans) == 0) {

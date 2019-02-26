@@ -4,7 +4,7 @@ LINK = gcc
 
 OBJDIR = objects
 #Programas intermedios
-OBJECTS = $(OBJDIR)/ordered_list.o $(OBJDIR)/schema.o $(OBJDIR)/main.o
+OBJECTS = $(OBJDIR)/ordered_list.o $(OBJDIR)/schema.o $(OBJDIR)/hash_table.o $(OBJDIR)/main.o
 DEPEND = $(OBJDIR)/main.o
 
 #Programa
@@ -30,6 +30,9 @@ $(OBJDIR)/ordered_list.o: ordered_list.c $(OBJDIR) ordered_list.h error.h
 
 $(OBJDIR)/schema.o: schema.c $(OBJDIR) schema.h
 	$(COMP) -o $(OBJDIR)/schema.o schema.c
+
+$(OBJDIR)/hash_table.o: hash_table.c $(OBJDIR) hash_table.h
+	$(COMP) -o $(OBJDIR)/hash_table.o hash_table.c
 
 $(OBJDIR):
 	mkdir $(OBJDIR)

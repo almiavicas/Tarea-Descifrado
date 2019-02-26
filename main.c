@@ -38,12 +38,8 @@ int main() {
 	        scanf("%[^\n]",message2);
     		getchar();
 
-    		printf("Inserte la fecha en formato yyyy/mm/dd");
+    		printf("Inserte la fecha en formato yyyy/mm/dd: ");
     		scanf("%d",&fecha);
-
-    		printf("%i\n", fecha);
-	        printf("%s\n", message1);
-	        printf("%s\n", message2);
 
 	        // Procesamiento de datos
 	        schema * sc = new_schema(fecha);
@@ -68,9 +64,8 @@ int main() {
 	        scanf("%[^\n]",message);
     		getchar();
 
-    		printf("Inserte la fecha en formato yyyymmdd");
+    		printf("Inserte la fecha en formato yyyymmdd: ");
     		scanf("%d",&fecha);
-    		printf("%i\n", fecha);
 
     		message_=decrypt(list,fecha,message);
 
@@ -89,7 +84,7 @@ int main() {
 	        scanf("%[^\n]",message);
     		getchar();
 
-    		printf("Inserte la fecha en formato yyyymmdd");
+    		printf("Inserte la fecha en formato yyyymmdd: ");
     		scanf("%d",&fecha);
     		printf("%i\n", fecha);
 
@@ -102,9 +97,8 @@ int main() {
 	    else if(option == 4){
 
 			int fecha;
-			printf("Inserte la fecha en formato yyyymmdd");
+			printf("Inserte la fecha en formato yyyymmdd: ");
     		scanf("%d",&fecha);
-    		printf("%i\n", fecha);
     		schema_print(schema_get_parent(list,fecha));
 	    	    
 	    }
@@ -112,7 +106,7 @@ int main() {
 	    else if(option == 5)
 	    {
 	    	int fecha;
-			printf("Inserte la fecha en formato yyyymmdd");
+			printf("Inserte la fecha en formato yyyymmdd: ");
     		scanf("%d",&fecha);
     		schema_remove(schema_get_parent(list,fecha));	
 	    	   
