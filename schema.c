@@ -2,7 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include "schema.h"
+#define MAX 150
 
+/*
+ Crea un esquema nuevo
+ Parametros:
+        int date: La fecha del esquema
+ Return: El esquema creado
+*/
 schema * new_schema(int date) {
 	schema * sc = malloc(sizeof(schema));
 	if (sc == NULL) {
@@ -27,8 +34,17 @@ schema * new_schema(int date) {
 	return sc;
 }
 
-// Recibe un esquema recien creado y define su encriptacion y decriptacion
-// Pregunta al usuario si quiere hacer merge en caso de que sea posible
+/*
+ Recibe un esquema recien creado y define su encriptacion y decriptacion
+ Pregunta al usuario si quiere hacer merge en caso de que sea posible
+ Parametros:
+        list_t * list: Tabla de hash
+        schema * sc: Esquema
+        char * encrypted: Mensaje encriptado
+        char * decrypted: Mensaje desencriptado
+
+ Return: 1 si el esquema fue creado, 0 si no
+*/
 int build_schema(list_t * list, schema * sc, char * encrypted, char * decrypted) {
 	if (strlen(encrypted) != strlen(decrypted)) {
 		fprintf(stderr, "%s\n", err_message_dif_len);
@@ -45,8 +61,6 @@ int build_schema(list_t * list, schema * sc, char * encrypted, char * decrypted)
 		encrypted++;
 		decrypted++;
 	}
-
-
 	list_it * it = iterator(list);
 	int is_prev_compatible = 0;
 	int is_next_compatible = 0;
@@ -124,10 +138,16 @@ int build_schema(list_t * list, schema * sc, char * encrypted, char * decrypted)
 	return 1;
 }
 
+/*
+ Revisa si un esquema es compatible con otro
+ Parametros:
+		schema * prev: Esquema anterior (Mas viejo en fecha)
+		schema * next: Esquema siguiente (Menos viejo en fecha)
+ Return: 1 si es compatible, 0 si no
+*/
+
 int is_schema_compatible(schema * prev, schema * next) {
 	char * keys = hash_table_keys(next->encryption);
-
-	//printf("Obtiene claves\n");
 	char * prev_value;
 	char * next_value;
 	while (*keys != '\0') {
@@ -143,6 +163,14 @@ int is_schema_compatible(schema * prev, schema * next) {
 	return 1;
 }
 
+/*
+ Obtiene el padre de un esquema
+ Parametros:
+		list_t * list: Lista enlazada
+		int date: Fecha del esquema
+ Return: El esquema padre
+*/
+
 schema * schema_get_parent(list_t * list, int date) {
 	schema * sc = (schema *) list_get(list, date);
 	while (sc != NULL && sc->parent_date != -1) {
@@ -150,6 +178,15 @@ schema * schema_get_parent(list_t * list, int date) {
 	}
 	return sc; 
 }
+
+/*
+ Encripta un mensaje
+ Parametros:
+		list_t * list: Lista enlazada
+		int date: Fecha del esquema
+		char * message: Mensaje a ser encriptado
+ Return: Mensaje encriptado
+*/
 
 char * encrypt(list_t * list, int date, char * message) {
 	schema * sc = schema_get_parent(list, date);
@@ -160,6 +197,14 @@ char * encrypt(list_t * list, int date, char * message) {
 	return translate(message, sc->encryption);
 }
 
+/*
+ Desencripta un mensaje
+ Parametros:
+		list_t * list: Lista enlazada
+		int date: Fecha del esquema
+		char * message: Mensaje a ser desencriptado
+ Return: Mensaje desencriptado
+*/
 char * decrypt(list_t * list, int date, char * message) {
 	schema * sc = schema_get_parent(list, date);
 	if (sc == NULL) {
@@ -169,11 +214,18 @@ char * decrypt(list_t * list, int date, char * message) {
 	return translate(message, sc->decryption);
 }
 
+/*
+ Traduce un mensaje encriptado a ser desencriptado o viceversa.
+ Parametros:
+		char * message: Mensaje
+		hash_table * translate_to: Tabla de hash
+ Return: Mensaje traducido
+*/
 char* translate(char * message, hash_table * translate_to) {
 	char * space = " ";
 	char * numeral = "#";
 	char * final;
-	char * retornar = malloc(10000000);
+	char * retornar = malloc(sizeof(char) * MAX);
 	while (message != NULL) {
 		char c = message[0];
 		char *pChar = &c;
@@ -195,8 +247,14 @@ char* translate(char * message, hash_table * translate_to) {
 	}
 }
 
-
-
+/*
+ Hace un merge de dos esquemas
+ Parametros:
+		list_t * list: Lista enlazada
+		schema * dest: Esquema destino
+		schema * source: Esquema fuente
+ Return: 1 si se logro el merge, 0 si no
+*/
 int merge(list_t * list, schema * dest, schema * source) {
 	if (dest->parent_date != -1) {
 		printf("Parent date: %d\n", dest->parent_date);
@@ -224,6 +282,13 @@ int merge(list_t * list, schema * dest, schema * source) {
 		return 1;
 	}
 }
+
+/*
+ Imprime la fecha del esquema
+ Parametros:
+		int date: Fecha
+ Return: Fecha
+ */
 
 char * schema_print_date(int date) {
 	// Date format: yyyy/mm/dd
@@ -270,6 +335,11 @@ char * schema_print_date(int date) {
 	return aux;
 }
 
+/*
+ Imprime el esquema
+ Parametros:
+		schema * sc: Esquema
+ */
 void schema_print(schema * sc) {
 
 	if (sc == NULL){
@@ -294,6 +364,11 @@ void schema_print(schema * sc) {
 	printf("\t%s\n ", keys);
 }
 
+/*
+ Elimina el esquema
+ Parametros:
+		schema * sc: Esquema
+ */
 void schema_remove(schema *sc) {
 	if (sc ==NULL){
 		return ;

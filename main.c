@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "schema.c"
-
+#define MAX 150
 
 void print(){
 	printf("\t1. Registrar nuevos mensajes cifrados y sus descifrados. \n");
@@ -19,16 +19,15 @@ int main() {
 	while(1){
 
 		int option;
-
 	    print();
 	    scanf("%i",&option);
 	    getchar();
 
-	    // Registrar nuevos mensajes cifrados y sus descifrados ////////////////////////////////
+	    // Registrar nuevos mensajes cifrados y sus descifrados
 	    if(option == 1)
 	    {
-	    	char * message1 = malloc(100000);
-	    	char * message2 = malloc(100000);
+	    	char * message1 = malloc(sizeof(char) * MAX);
+	    	char * message2 = malloc(sizeof(char) * MAX);
 	    	int fecha;
 
 	        printf("Inserte el mensaje cifrado: ");
@@ -61,7 +60,7 @@ int main() {
 	    // Descifrar mensajes
 	    else if(option == 2)
 	    {
-	    	char * message = malloc(100000);
+	    	char * message = malloc(sizeof(char) * MAX);
 	    	int fecha;
 	    	char *message_;
 
@@ -82,7 +81,7 @@ int main() {
 	    // Cifrar mensajes
 	    else if(option == 3)
 	    {
-	     	char * message = malloc(100000);
+	     	char * message = malloc(sizeof(char) * MAX);
 	    	int fecha;
 	    	char *message_;
 
@@ -107,9 +106,7 @@ int main() {
     		scanf("%d",&fecha);
     		printf("%i\n", fecha);
     		schema_print(schema_get_parent(list,fecha));
-	    	
-	    
-	        
+	    	    
 	    }
 	    // Borrar un esquema cifrado debido a un error
 	    else if(option == 5)
@@ -117,7 +114,6 @@ int main() {
 	    	int fecha;
 			printf("Inserte la fecha en formato yyyymmdd");
     		scanf("%d",&fecha);
-    		//printf("%i\n", fecha);
     		schema_remove(schema_get_parent(list,fecha));	
 	    	   
 	    }
